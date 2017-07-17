@@ -1,0 +1,16 @@
+#!/bin/sh
+
+export HOME=/home
+export PATH=/bin:/sbin
+
+mount -t proc proc proc
+mount -t sysfs sys sys
+mkdir -p dev/pts
+mount -t devpts dev/pts dev/pts
+
+[ -z "$CONSOLE" ] &&
+  CONSOLE="$(sed -n 's@.* console=\(/dev/\)*\([^ ]*\).*@\2@p' /proc/cmdline)"
+
+[ -z "$HANDOFF" ] && HANDOFF=/bin/sh && echo Type exit when done.
+[ -z "$CONSOLE" ] && CONSOLE=console
+exec /sbin/oneit -c /dev/"$CONSOLE" $HANDOFF
