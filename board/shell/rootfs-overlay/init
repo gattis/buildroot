@@ -13,4 +13,5 @@ mount -t devpts dev/pts dev/pts
 
 [ -z "$HANDOFF" ] && HANDOFF=/bin/sh && echo Type exit when done.
 [ -z "$CONSOLE" ] && CONSOLE=console
+hostname ghost
 exec /sbin/oneit -c /dev/"$CONSOLE" $HANDOFF
