@@ -39,6 +39,14 @@ HOST_GETTEXT_CONF_OPTS = \
 	--disable-relocatable \
 	--without-emacs
 
+# Force the build of libintl, even if the C library provides a stub
+# gettext implementation
+ifeq ($(BR2_PACKAGE_GETTEXT_PROVIDES_LIBINTL),y)
+GETTEXT_CONF_OPTS += --with-included-gettext
+else
+GETTEXT_CONF_OPTS += --without-included-gettext
+endif
+
 # For the target version, we only need the runtime, and for the host
 # version, we only need the tools.
 GETTEXT_SUBDIR = gettext-runtime
@@ -72,7 +80,7 @@ endif
 
 # Disable interactive confirmation in host gettextize for package fixups
 define HOST_GETTEXT_GETTEXTIZE_CONFIRMATION
-	$(SED) '/read dummy/d' $(HOST_DIR)/usr/bin/gettextize
+	$(SED) '/read dummy/d' $(HOST_DIR)/bin/gettextize
 endef
 HOST_GETTEXT_POST_INSTALL_HOOKS += HOST_GETTEXT_GETTEXTIZE_CONFIRMATION
 
@@ -81,12 +89,12 @@ HOST_GETTEXT_POST_INSTALL_HOOKS += HOST_GETTEXT_GETTEXTIZE_CONFIRMATION
 # host, so do it manually
 define HOST_GETTEXT_ADD_ABOUT_NLS
 	$(INSTALL) -m 0644 $(@D)/$(HOST_GETTEXT_SUBDIR)/ABOUT-NLS \
-		$(HOST_DIR)/usr/share/gettext/ABOUT-NLS
+		$(HOST_DIR)/share/gettext/ABOUT-NLS
 endef
 
 HOST_GETTEXT_POST_INSTALL_HOOKS += HOST_GETTEXT_ADD_ABOUT_NLS
 
-GETTEXTIZE = $(HOST_CONFIGURE_OPTS) AUTOM4TE=$(HOST_DIR)/usr/bin/autom4te $(HOST_DIR)/usr/bin/gettextize -f
+GETTEXTIZE = $(HOST_CONFIGURE_OPTS) AUTOM4TE=$(HOST_DIR)/bin/autom4te $(HOST_DIR)/bin/gettextize -f
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

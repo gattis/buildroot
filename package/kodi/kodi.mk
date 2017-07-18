@@ -63,12 +63,12 @@ KODI_CONF_OPTS += \
 	-DENABLE_INTERNAL_FFMPEG=OFF \
 	-DKODI_DEPENDSBUILD=OFF \
 	-DENABLE_OPENSSL=ON \
-	-DNATIVEPREFIX=$(HOST_DIR)/usr \
+	-DNATIVEPREFIX=$(HOST_DIR) \
 	-DDEPENDS_PATH=$(@D) \
-	-DWITH_TEXTUREPACKER=$(HOST_DIR)/usr/bin/TexturePacker \
-	-DLIBDVDCSS_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDCSS_VERSION).tar.gz \
-	-DLIBDVDNAV_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDNAV_VERSION).tar.gz \
-	-DLIBDVDREAD_URL=$(BR2_DL_DIR)/$(KODI_LIBDVDREAD_VERSION).tar.gz
+	-DWITH_TEXTUREPACKER=$(HOST_DIR)/bin/TexturePacker \
+	-DLIBDVDCSS_URL=$(DL_DIR)/$(KODI_LIBDVDCSS_VERSION).tar.gz \
+	-DLIBDVDNAV_URL=$(DL_DIR)/$(KODI_LIBDVDNAV_VERSION).tar.gz \
+	-DLIBDVDREAD_URL=$(DL_DIR)/$(KODI_LIBDVDREAD_VERSION).tar.gz
 
 ifeq ($(BR2_arm),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arm -DWITH_CPU=arm
@@ -349,7 +349,7 @@ endif
 KODI_ADDON_MANIFEST = $(TARGET_DIR)/usr/share/kodi/system/addon-manifest.xml
 define KODI_CLEAN_UNUSED_ADDONS
 	rm -Rf $(TARGET_DIR)/usr/share/kodi/addons/service.xbmc.versioncheck
-	$(HOST_DIR)/usr/bin/xml ed -L \
+	$(HOST_DIR)/bin/xml ed -L \
 		-d "/addons/addon[text()='service.xbmc.versioncheck']" \
 		$(KODI_ADDON_MANIFEST)
 endef

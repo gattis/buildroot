@@ -440,14 +440,14 @@ TAR_OPTIONS = $(call qstrip,$(BR2_TAR_OPTIONS)) -xf
 HOST_DIR := $(call qstrip,$(BR2_HOST_DIR))
 
 # Quotes are needed for spaces and all in the original PATH content.
-BR_PATH = "$(HOST_DIR)/bin:$(HOST_DIR)/sbin:$(HOST_DIR)/usr/bin:$(HOST_DIR)/usr/sbin:$(PATH)"
+BR_PATH = "$(HOST_DIR)/bin:$(HOST_DIR)/sbin:$(PATH)"
 
 # Location of a file giving a big fat warning that output/target
 # should not be used as the root filesystem.
 TARGET_DIR_WARNING_FILE = $(TARGET_DIR)/THIS_IS_NOT_YOUR_ROOT_FILESYSTEM
 
 ifeq ($(BR2_CCACHE),y)
-CCACHE := $(HOST_DIR)/usr/bin/ccache
+CCACHE := $(HOST_DIR)/bin/ccache
 BR_CACHE_DIR ?= $(call qstrip,$(BR2_CCACHE_DIR))
 export BR_CACHE_DIR
 HOSTCC := $(CCACHE) $(HOSTCC)
@@ -541,7 +541,7 @@ endif
 
 .PHONY: dirs
 dirs: $(BUILD_DIR) $(STAGING_DIR) $(TARGET_DIR) \
-	$(HOST_DIR) $(BINARIES_DIR)
+	$(HOST_DIR) $(HOST_DIR)/usr $(BINARIES_DIR)
 
 $(BUILD_DIR)/buildroot-config/auto.conf: $(BR2_CONFIG)
 	$(MAKE1) $(EXTRAMAKEARGS) HOSTCC="$(HOSTCC_NOCCACHE)" HOSTCXX="$(HOSTCXX_NOCCACHE)" silentoldconfig
@@ -551,6 +551,10 @@ prepare: $(BUILD_DIR)/buildroot-config/auto.conf
 
 .PHONY: world
 world: target-post-image
+
+# Compatibility symlink in case a post-build script still uses $(HOST_DIR)/usr
+$(HOST_DIR)/usr: $(HOST_DIR)
+	@ln -snf . $@
 
 # Populating the staging with the base directories is handled by the skeleton package
 $(STAGING_DIR):
@@ -604,7 +608,7 @@ define GENERATE_GLIBC_LOCALES
 		fi ; \
 		echo "Generating locale $${inputfile}.$${charmap}" ; \
 		I18NPATH=$(STAGING_DIR)/usr/share/i18n:/usr/share/i18n \
-		$(HOST_DIR)/usr/bin/localedef \
+		$(HOST_DIR)/bin/localedef \
 			--prefix=$(TARGET_DIR) \
 			--$(call LOWERCASE,$(BR2_ENDIAN))-endian \
 			-i $${inputfile} -f $${charmap} \
@@ -739,8 +743,8 @@ legal-info-clean:
 
 .PHONY: legal-info-prepare
 legal-info-prepare: $(LEGAL_INFO_DIR)
-	@$(call MESSAGE,"Collecting legal info")
-	@$(call legal-license-file,buildroot,COPYING,COPYING,HOST)
+	@$(call MESSAGE,"Buildroot $(BR2_VERSION_FULL) Collecting legal info")
+	@$(call legal-license-file,buildroot,buildroot,support/legal-info,COPYING,COPYING,HOST)
 	@$(call legal-manifest,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,TARGET)
 	@$(call legal-manifest,PACKAGE,VERSION,LICENSE,LICENSE FILES,SOURCE ARCHIVE,SOURCE SITE,HOST)
 	@$(call legal-manifest,buildroot,$(BR2_VERSION_FULL),GPL-2.0+,COPYING,not saved,not saved,HOST)
@@ -811,7 +815,14 @@ check-dependencies:
 
 else # ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 
-all: menuconfig
+# Some subdirectories are also package names. To avoid that "make linux"
+# on an unconfigured tree produces "Nothing to be done", add an explicit
+# rule for it.
+# Also for 'all' we error out and ask the user to configure first.
+.PHONY: linux toolchain
+linux toolchain all: outputmakefile
+	$(error Please configure Buildroot first (e.g. "make menuconfig"))
+	@exit 1
 
 endif # ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 
@@ -1098,8 +1109,11 @@ release:
 print-version:
 	@echo $(BR2_VERSION_FULL)
 
-.gitlab-ci.yml: .gitlab-ci.yml.in configs/*_defconfig
-	(cd configs; LC_ALL=C ls -1 *_defconfig) | sed 's/$$/: *defconfig/' | cat $< - > $@
+.PHONY: .gitlab-ci.yml
+.gitlab-ci.yml: .gitlab-ci.yml.in
+	cp $< $@
+	(cd configs; LC_ALL=C ls -1 *_defconfig) | sed 's/$$/: *defconfig/' >> $@
+	./support/testing/run-tests -l 2>&1 | sed -r -e '/^test_run \((.*)\).*/!d; s//\1: *runtime_test/' | LC_ALL=C sort >> $@
 
 include docs/manual/manual.mk
 -include $(foreach dir,$(BR2_EXTERNAL_DIRS),$(dir)/docs/*/*.mk)
