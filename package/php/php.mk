@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_VERSION = 7.1.6
+PHP_VERSION = 7.1.7
 PHP_SITE = http://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
@@ -160,7 +160,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_PHP_EXT_GETTEXT),y)
 PHP_CONF_OPTS += --with-gettext=$(STAGING_DIR)/usr
-PHP_DEPENDENCIES += $(if $(BR2_NEEDS_GETTEXT),gettext)
+PHP_DEPENDENCIES += $(TARGET_NLS_DEPENDENCIES)
 endif
 
 ifeq ($(BR2_PACKAGE_PHP_EXT_ICONV),y)

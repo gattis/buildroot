@@ -34,6 +34,7 @@ F:	package/audit/
 F:	package/checkpolicy/
 F:	package/gstreamer1/gst1-vaapi/
 F:	package/janus-gateway/
+F:	package/libressl/
 F:	package/libselinux/
 F:	package/libsemanage/
 F:	package/libsepol/
@@ -44,6 +45,9 @@ F:	package/refpolicy/
 F:	package/sepolgen/
 F:	package/setools/
 F:	package/sngrep/
+
+N:	Adrian Perez de Castro <aperez@igalia.com>
+F:	package/webkitgtk/
 
 N:	Alex Suykov <alex.suykov@gmail.com>
 F:	package/vboot-utils/
@@ -81,6 +85,7 @@ N:	Anders Darander <anders@chargestorm.se>
 F:	package/ktap/
 
 N:	André Hentschel <nerv@dawncrow.de>
+F:	package/azure-iot-sdk-c/
 F:	package/openal/
 F:	package/p7zip/
 F:	package/wine/
@@ -94,6 +99,9 @@ F:	package/python-pickleshare/
 F:	package/python-scandir/
 F:	package/python-simplegeneric/
 F:	package/python-traitlets/
+
+N:	Andrey Yurovsky <yurovsky@gmail.com>
+F:	package/rauc/
 
 N:	Andy Kennedy <andy.kennedy@adtran.com>
 F:	package/libunwind/
@@ -245,6 +253,7 @@ F:	package/libsquish/
 F:	package/liburiparser/
 F:	package/libva/
 F:	package/libva-intel-driver/
+F:	package/libva-utils/
 F:	package/libvorbis/
 F:	package/libvpx/
 F:	package/libyuv/
@@ -339,8 +348,12 @@ F:	package/libsvg/
 F:	package/libsvg-cairo/
 
 N:	Chakra Divi <chakra@openedev.com>
+F:	board/friendlyarm/nanopi-m1
 F:	board/olimex/a13_olinuxino
+F:	board/orangepi/orangepi-plus
+F:	configs/nanopi_m1_defconfig
 F:	configs/olimex_a13_olinuxino_defconfig
+F:	configs/orangepi_plus_defconfig
 
 N:	Chris Packham <judge.packham@gmail.com>
 F:	package/eventlog/
@@ -600,7 +613,7 @@ F:	package/qemu/
 F:	package/sdl2_mixer/
 F:	package/sdl2_net/
 F:	package/tekui/
-F:	support/scripts/scancpan
+F:	utils/scancpan
 
 N:	Frank Hunleth <fhunleth@troodon-software.com>
 F:	package/am335x-pru-package/
@@ -614,6 +627,9 @@ F:	package/sane-backends/
 F:	package/ucl/
 F:	package/upx/
 F:	package/zxing-cpp/
+
+N:	Gaël Portay <gael.portay@savoirfairelinux.com>
+F:	package/qt5/qt5virtualkeyboard/
 
 N:	Gary Bisson <gary.bisson@boundarydevices.com>
 F:	board/boundarydevices/
@@ -843,7 +859,10 @@ F:	package/keepalived/
 
 N:	Jagan Teki <jagan@amarulasolutions.com>
 F:	board/engicam/
-F:	configs/engicam_imx6q_icore_defconfig
+F:	configs/engicam_imx6qdl_icore_defconfig
+F:	configs/engicam_imx6qdl_icore_rqs_defconfig
+F:	configs/engicam_imx6ul_geam_defconfig
+F:	configs/engicam_imx6ul_isiot_defconfig
 
 N:	James Knight <james.knight@rockwellcollins.com>
 F:	package/atkmm/
@@ -957,6 +976,7 @@ F:	package/lldpd/
 
 N:	Julien Viard de Galbert <julien@vdg.name>
 F:	package/dieharder/
+F:	package/easy-rsa/
 
 N:	Justin Maggard <jmaggard@netgear.com>
 F:	package/dtach/
@@ -1069,8 +1089,10 @@ N:	Marcin Niestroj <m.niestroj@grinn-global.com>
 F:	board/grinn/
 F:	configs/grinn_*
 F:	package/argparse/
+F:	package/dt-utils/
 F:	package/easydbus/
 F:	package/lua-flu/
+F:	package/lua-stdlib/
 F:	package/luaossl/
 F:	package/rs485conf/
 F:	package/turbolua/
@@ -1216,6 +1238,9 @@ F:	package/monkey/
 N:	Murat Demirten <mdemirten@yh.com.tr>
 F:	package/jpeg-turbo/
 F:	package/libgeotiff/
+
+N:	Naoki Matsumoto <n-matsumoto@melcoinc.co.jp>
+F:	package/pcre2/
 
 N:	Nathan Lynch <ntl@pobox.com>
 F:	package/chrony/
@@ -1382,7 +1407,8 @@ N:	Rhys Williams <github@wilberforce.co.nz>
 F:	package/lirc-tools/
 
 N:	Ricardo Martincoski <ricardo.martincoski@gmail.com>
-F:	support/scripts/check*package*
+F:	utils/check-package
+F:	utils/checkpackagelib/
 
 N:	Richard Braun <rbraun@sceen.net>
 F:	package/curlftpfs/
@@ -1404,6 +1430,7 @@ F:	package/efl/
 F:	package/enlightenment/
 F:	package/expedite/
 F:	package/iqvlinux/
+F:	package/irrlicht/
 F:	package/liblinear/
 F:	package/lensfun/
 F:	package/libspatialindex/
@@ -1441,14 +1468,6 @@ F:	package/biosdevname/
 
 N:	Rémi Rérolle <remi.rerolle@gmail.com>
 F:	package/libfreeimage/
-
-N:	Sagaert Johan <sagaert.johan@skynet.be>
-F:	package/git/
-F:	package/gsl/
-F:	package/jquery-mobile/
-F:	package/libgsasl/
-F:	package/qdecoder/
-F:	package/qlibc/
 
 N:	Sam Bobroff <sam.bobroff@au1.ibm.com>
 F:	arch/Config.in.powerpc
@@ -1620,7 +1639,7 @@ N:	Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
 F:	docs/manual/
 F:	package/opkg-utils/
 F:	support/scripts/size-stats
-F:	support/scripts/size-stats-compare
+F:	utils/size-stats-compare
 F:	toolchain/
 
 N:	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
@@ -1701,9 +1720,10 @@ F:	package/openmpi/
 F:	package/pinentry/
 F:	package/trinity/
 
-N:	Vincent Stehlé <vincent.stehle@intel.com>
+N:	Vincent Stehlé <vincent.stehle@laposte.net>
 F:	package/i7z/
 F:	package/msr-tools/
+F:	package/pixz/
 
 N:	Vinicius Tinti <viniciustinti@gmail.com>
 F:	package/python-thrift/
@@ -1721,9 +1741,10 @@ F:	arch/Config.in.bfin
 F:	arch/Config.in.m68k
 F:	arch/Config.in.or1k
 F:	arch/Config.in.sparc
+F:	package/glibc/
+F:	package/mksh/
 F:	package/uclibc/
 F:	package/uclibc-ng-test/
-F:	package/mksh/
 
 N:	Will Newton <will.newton@gmail.com>
 F:	package/enchant/
@@ -1748,6 +1769,7 @@ N:	Wojciech Niziński <niziak@spox.org>
 F:	package/fwup/
 
 N:	Yann E. MORIN <yann.morin.1998@free.fr>
+F:	fs/squashfs/
 F:	package/cegui06/
 F:	package/celt051/
 F:	package/dtc/
@@ -1763,7 +1785,6 @@ F:	package/libiscsi/
 F:	package/libseccomp/
 F:	package/linux-tools/
 F:	package/mesa3d-headers/
-F:	package/mke2img/
 F:	package/nbd/
 F:	package/nut/
 F:	package/nvidia-driver/
@@ -1823,7 +1844,7 @@ F:	package/ti-utils/
 F:	package/x11r7/xapp_xconsole/
 F:	package/x11r7/xapp_xinput-calibrator/
 F:	package/zlog/
-F:	support/scripts/scanpypi
+F:	utils/scanpypi
 
 N:	Zoltan Gyarmati <mr.zoltan.gyarmati@gmail.com>
 F:	package/crudini/

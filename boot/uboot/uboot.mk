@@ -153,6 +153,14 @@ endef
 UBOOT_POST_EXTRACT_HOOKS += UBOOT_COPY_OLD_LICENSE_FILE
 UBOOT_POST_RSYNC_HOOKS += UBOOT_COPY_OLD_LICENSE_FILE
 
+ifneq ($(ARCH_XTENSA_OVERLAY_FILE),)
+define UBOOT_XTENSA_OVERLAY_EXTRACT
+	$(call arch-xtensa-overlay-extract,$(@D),u-boot)
+endef
+UBOOT_POST_EXTRACT_HOOKS += UBOOT_XTENSA_OVERLAY_EXTRACT
+UBOOT_EXTRA_DOWNLOADS += $(ARCH_XTENSA_OVERLAY_URL)
+endif
+
 # Analogous code exists in linux/linux.mk. Basically, the generic
 # package infrastructure handles downloading and applying remote
 # patches. Local patches are handled depending on whether they are
@@ -214,7 +222,7 @@ define UBOOT_BUILD_CMDS
 endef
 
 define UBOOT_BUILD_OMAP_IFT
-	$(HOST_DIR)/usr/bin/gpsign -f $(@D)/u-boot.bin \
+	$(HOST_DIR)/bin/gpsign -f $(@D)/u-boot.bin \
 		-c $(call qstrip,$(BR2_TARGET_UBOOT_OMAP_IFT_CONFIG))
 endef
 
@@ -231,10 +239,14 @@ define UBOOT_INSTALL_IMAGES_CMDS
 	)
 	$(if $(BR2_TARGET_UBOOT_ENVIMAGE),
 		cat $(call qstrip,$(BR2_TARGET_UBOOT_ENVIMAGE_SOURCE)) | \
-			$(HOST_DIR)/usr/bin/mkenvimage -s $(BR2_TARGET_UBOOT_ENVIMAGE_SIZE) \
+			$(HOST_DIR)/bin/mkenvimage -s $(BR2_TARGET_UBOOT_ENVIMAGE_SIZE) \
 			$(if $(BR2_TARGET_UBOOT_ENVIMAGE_REDUNDANT),-r) \
 			$(if $(filter BIG,$(BR2_ENDIAN)),-b) \
 			-o $(BINARIES_DIR)/uboot-env.bin -)
+	$(if $(BR2_TARGET_UBOOT_BOOT_SCRIPT),
+		$(HOST_DIR)/bin/mkimage -C none -A $(MKIMAGE_ARCH) -T script \
+			-d $(call qstrip,$(BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE)) \
+			$(BINARIES_DIR)/boot.scr)
 endef
 
 define UBOOT_INSTALL_OMAP_IFT_IMAGE
@@ -257,8 +269,8 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_ZYNQ_IMAGE),y)
 define UBOOT_GENERATE_ZYNQ_IMAGE
-	$(HOST_DIR)/usr/bin/python2 \
-		$(HOST_DIR)/usr/bin/zynq-boot-bin.py \
+	$(HOST_DIR)/bin/python2 \
+		$(HOST_DIR)/bin/zynq-boot-bin.py \
 		-u $(@D)/$(firstword $(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME))) \
 		-o $(BINARIES_DIR)/BOOT.BIN
 endef
@@ -276,7 +288,7 @@ UBOOT_CRC_ALTERA_SOCFPGA_HEADER_VERSION = 1
 endif
 define UBOOT_CRC_ALTERA_SOCFPGA_IMAGE
 	$(foreach f,$(UBOOT_CRC_ALTERA_SOCFPGA_INPUT_IMAGES), \
-		$(HOST_DIR)/usr/bin/mkpimage \
+		$(HOST_DIR)/bin/mkpimage \
 			-v $(UBOOT_CRC_ALTERA_SOCFPGA_HEADER_VERSION) \
 			-o $(BINARIES_DIR)/$(notdir $(call qstrip,$(f))).crc \
 			$(@D)/$(call qstrip,$(f))
@@ -293,6 +305,15 @@ $(error Please define a source file for Uboot environment (BR2_TARGET_UBOOT_ENVI
 endif
 ifeq ($(call qstrip,$(BR2_TARGET_UBOOT_ENVIMAGE_SIZE)),)
 $(error Please provide Uboot environment size (BR2_TARGET_UBOOT_ENVIMAGE_SIZE setting))
+endif
+endif
+UBOOT_DEPENDENCIES += host-uboot-tools
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_BOOT_SCRIPT),y)
+ifeq ($(BR_BUILDING),y)
+ifeq ($(call qstrip,$(BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE)),)
+$(error Please define a source file for Uboot boot script (BR2_TARGET_UBOOT_BOOT_SCRIPT_SOURCE setting))
 endif
 endif
 UBOOT_DEPENDENCIES += host-uboot-tools
